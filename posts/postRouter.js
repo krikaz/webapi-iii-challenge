@@ -3,7 +3,7 @@ const Posts = require('./postDb');
 
 const router = express.Router();
 
-function validateUserId(req, res, next) {
+function validatePostId(req, res, next) {
   const { id } = req.params;
   if (Number.isInteger(Number.id)) {
     req.validate = true;
@@ -12,7 +12,7 @@ function validateUserId(req, res, next) {
       req.post = post;
       next();
     } else {
-      res.status(404).json({ message: 'that id has gone to Mars!' });
+      res.status(404).json({ message: 'no post for this id' });
     }
   } else {
     res.set('X-Nasty', 'Nasty ID');
