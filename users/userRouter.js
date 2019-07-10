@@ -53,11 +53,37 @@ router.get('/:id', validateUserId, async (req, res) => {
 	}
 });
 
-router.get('/:id/posts', (req, res) => {});
+router.get('/:id/posts', validateUserId, async (req, res) => {
+	try {
+		const { id } = req.params;
+		const posts = await Users.getUserPosts(id);
+		res.status(200).json(posts);
+	} catch (error) {
+		res.status(500).json({ error: 'The user posts could not be retrieved.' });
+	}
+});
 
-router.delete('/:id', (req, res) => {});
+router.delete('/:id', validateUserId, async (req, res) => {
+	try {
+		const { id } = req.params;
+		const user = await Users.remove(id);
+		res.status(200).json(user);
+	} catch (error) {
+		res.status(500).json({ error: 'The user could not be deleted.' });
+	}
+});
 
-router.put('/:id', (req, res) => {});
+router.put('/:id', validateUserId, validateUser, async (req, res) => {
+	try {
+		const { id } = req.params;
+		const user = await Users.update(id, req.body);
+		res.status(201).json(user);
+	} catch (error) {
+		res.status(500).json({
+			error: 'There was an error while updating the user to the database',
+		});
+	}
+});
 
 //custom middleware
 
