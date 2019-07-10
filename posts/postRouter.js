@@ -1,6 +1,6 @@
 const express = require('express');
 const Posts = require('./postDb');
-// const UserRouter = require('../users/userRouter');
+const validatePost = require('../users/userRouter').validatePost;
 
 const router = express.Router();
 
@@ -35,23 +35,17 @@ router.delete('/:id', validatePostId, async (req, res) => {
 	}
 });
 
-router.put(
-	'/:id',
-	validatePostId,
-	// UserRouter.validatePost,
-	validatePost,
-	async (req, res) => {
-		try {
-			const { id } = req.params;
-			const post = await Posts.update(id, req.body);
-			res.status(201).json(post);
-		} catch (error) {
-			res.status(500).json({
-				error: 'There was an error while updating the post to the database',
-			});
-		}
+router.put('/:id', validatePostId, validatePost, async (req, res) => {
+	try {
+		const { id } = req.params;
+		const post = await Posts.update(id, req.body);
+		res.status(201).json(post);
+	} catch (error) {
+		res.status(500).json({
+			error: 'There was an error while updating the post to the database',
+		});
 	}
-);
+});
 
 // custom middleware
 
@@ -63,18 +57,6 @@ async function validatePostId(req, res, next) {
 		next();
 	} else {
 		res.status(400).json({ message: 'invalid post id' });
-	}
-}
-
-async function validatePost(req, res, next) {
-	if (Object.keys(req.body).length !== 0) {
-		if (req.body.text) {
-			next();
-		} else {
-			res.status(400).json({ message: 'missing required text field' });
-		}
-	} else {
-		res.status(400).json({ message: 'missing post data' });
 	}
 }
 
