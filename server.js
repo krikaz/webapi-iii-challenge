@@ -3,6 +3,7 @@ const server = express();
 const usersRoutes = require('./users/userRouter');
 
 server.use(express.json());
+server.use(logger);
 server.use('/api/users', usersRoutes);
 
 server.get('/', (req, res) => {
@@ -11,6 +12,10 @@ server.get('/', (req, res) => {
 
 //custom middleware
 
-function logger(req, res, next) {}
+function logger(req, res, next) {
+	const date = new Date();
+	console.log(date.toLocaleDateString(), req.method, req.url);
+	next();
+}
 
 module.exports = server;
